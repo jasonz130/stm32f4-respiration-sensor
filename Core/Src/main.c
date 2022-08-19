@@ -73,42 +73,41 @@ int main(void)
   while (1)
   {
 		
-		/* BUFFER 1 SECOND AFTER STARTING FOR VOLTAGE TO REACH STARTING VALUE */
-		if (condition_start == 0){
-			HAL_Delay(1000);
-			condition_start = 1;
-		}
-		
-		
-		/* INIT VARIABLE VALUES FROM ADC_VAL_ARRAY */
-		voltage_positive_envelope = (3.3 / 256.) * (*adc_val_array) * 1000;
-		voltage_negative_envelope = *adc_val_array + 1;
-		voltage_instant_1 = *adc_val_array + 2;
-		
-		
-		/* PART I: BOTH SENSORS DETECT CHANGES */
-		if (condition_voltage_threshold_1 == 0 && condition_voltage_threshold_2 == 0){
-			// voltage_instant;
-		}
-		
-		
-		/* PART II: HALL SENSOR DETECT NO CHANGES AND INIT PHOTODIODE SENSOR*/
-		// Enable photodiode sensor section
-		if (voltage_positive_envelope < voltage_pp_threshold_1) {
-			condition_voltage_threshold_1 = 1;			
-		}
-		if (condition_voltage_threshold_1){
-			// Scale voltage_instant_2 by voltage_pp_threshold_1
-			voltage_instant_2 = voltage_instant_1 - voltage_pp_threshold_1;
-		}
-		
-		
-		/* PART III: HALL SENSOR AND PHOTODIODE SENSOR DETECT NO CHANGES */
-		if ((condition_voltage_threshold_1 == 1) && (voltage_positive_envelope > voltage_pp_threshold_2)){
-			condition_voltage_threshold_2 = 1;
-			HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_8B_R, output_LED); 
-		}
-		
+	/* BUFFER 1 SECOND AFTER STARTING FOR VOLTAGE TO REACH STARTING VALUE */
+	if (condition_start == 0){
+		HAL_Delay(1000);
+		condition_start = 1;
+	}
+
+
+	/* INIT VARIABLE VALUES FROM ADC_VAL_ARRAY */
+	voltage_positive_envelope = (3.3 / 256.) * (*adc_val_array) * 1000;
+	voltage_negative_envelope = *adc_val_array + 1;
+	voltage_instant_1 = *adc_val_array + 2;
+
+
+	/* PART I: BOTH SENSORS DETECT CHANGES */
+	if (condition_voltage_threshold_1 == 0 && condition_voltage_threshold_2 == 0){
+		// voltage_instant;
+	}
+
+
+	/* PART II: HALL SENSOR DETECT NO CHANGES AND INIT PHOTODIODE SENSOR*/
+	// Enable photodiode sensor section
+	if (voltage_positive_envelope < voltage_pp_threshold_1) {
+		condition_voltage_threshold_1 = 1;			
+	}
+	if (condition_voltage_threshold_1){
+		// Scale voltage_instant_2 by voltage_pp_threshold_1
+		voltage_instant_2 = voltage_instant_1 - voltage_pp_threshold_1;
+	}
+
+
+	/* PART III: HALL SENSOR AND PHOTODIODE SENSOR DETECT NO CHANGES */
+	if ((condition_voltage_threshold_1 == 1) && (voltage_positive_envelope > voltage_pp_threshold_2)){
+		condition_voltage_threshold_2 = 1;
+		HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_8B_R, output_LED); 
+	}	
   }
 }
 
